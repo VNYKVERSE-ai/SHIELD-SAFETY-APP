@@ -1,0 +1,28 @@
+
+name: Unpack SHIELD Android Project
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  unpack:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Extract Android project
+        run: |
+          unzip -o SHIELD_Android_Upgrade.zip -d .
+
+      - name: Save extracted files
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add app build.gradle settings.gradle gradle.properties README_ANDROID.md .github/workflows/build-apk.yml
+          git diff --cached --quiet || git commit -m "Add SHIELD Android V2 project"
+          git push
