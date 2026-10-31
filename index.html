@@ -1,0 +1,142 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#101827">
+  <meta name="description" content="SHIELD — offline-first personal safety prototype">
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="icon" href="icon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="styles.css">
+  <title>SHIELD — Personal Safety</title>
+</head>
+<body>
+  <main class="app-shell">
+    <header class="topbar">
+      <div class="brand-mark">S</div>
+      <div>
+        <div class="brand">SHIELD</div>
+        <div class="tagline">Your safety. Your control.</div>
+      </div>
+      <span id="networkPill" class="pill">Checking network…</span>
+    </header>
+
+    <section class="intro">
+      <p class="eyebrow">PERSONAL SAFETY COMPANION</p>
+      <h1>Help is one tap away.</h1>
+      <p class="muted">Your safety tools stay available offline. Sending an alert still needs a working communication channel.</p>
+    </section>
+
+    <section class="sos-panel" aria-labelledby="sosTitle">
+      <div class="sos-ring">
+        <button id="sosButton" class="sos-button" type="button">
+          <span class="sos-word">SOS</span>
+          <span class="sos-sub">EMERGENCY HELP</span>
+        </button>
+      </div>
+      <p id="sosHint" class="sos-hint">Tap SOS to prepare an emergency alert.</p>
+    </section>
+
+    <section class="status-card">
+      <div class="card-icon">⌖</div>
+      <div class="status-copy">
+        <strong>Location status</strong>
+        <span id="locationStatus">Not checked yet</span>
+      </div>
+      <button id="locationButton" class="small-button" type="button">Get location</button>
+    </section>
+
+    <section class="grid-actions">
+      <button id="contactsOpen" class="action-card blue" type="button">
+        <span class="action-icon">♡</span><span>Emergency contacts</span><small>Manage trusted people</small>
+      </button>
+      <button id="journeyOpen" class="action-card purple" type="button">
+        <span class="action-icon">➜</span><span>Safe Journey</span><small>Start a check-in timer</small>
+      </button>
+      <button id="historyOpen" class="action-card slate" type="button">
+        <span class="action-icon">▤</span><span>Safety history</span><small>View saved incidents</small>
+      </button>
+      <button id="helpOpen" class="action-card slate" type="button">
+        <span class="action-icon">ⓘ</span><span>How it works</span><small>Know the limitations</small>
+      </button>
+    </section>
+
+    <section class="offline-note">
+      <span class="offline-dot"></span>
+      <div><strong>Offline-ready basics</strong><p>App screens, saved contacts and local incident records can work without internet after the app has been loaded once.</p></div>
+    </section>
+
+    <footer>SHIELD is a college-project prototype, not a replacement for official emergency services.</footer>
+  </main>
+
+  <dialog id="sosDialog" class="modal">
+    <form method="dialog" class="modal-card">
+      <button class="close" value="cancel" aria-label="Close">×</button>
+      <p class="eyebrow">EMERGENCY PROTOCOL</p>
+      <h2>Prepare an SOS alert?</h2>
+      <p class="muted">SHIELD will try to get your current location and prepare message/call options. Nothing is sent automatically.</p>
+      <div id="sosResult" class="result-box">No alert prepared yet.</div>
+      <button id="prepareAlert" class="primary-button" type="button">Prepare alert</button>
+      <a id="call112" class="call-button" href="tel:112">Call India emergency number 112</a>
+      <button id="cancelSos" class="text-button" type="button">Cancel</button>
+    </form>
+  </dialog>
+
+  <dialog id="contactsDialog" class="modal">
+    <form method="dialog" class="modal-card">
+      <button class="close" value="cancel" aria-label="Close">×</button>
+      <p class="eyebrow">TRUSTED CIRCLE</p><h2>Emergency contacts</h2>
+      <label>Name<input id="contactName" autocomplete="name" placeholder="e.g. Asha"></label>
+      <label>Phone number<input id="contactPhone" autocomplete="tel" inputmode="tel" placeholder="e.g. +91 9876543210"></label>
+      <button id="addContact" class="primary-button" type="button">Save contact</button>
+      <div id="contactList" class="list"></div>
+      <button class="text-button" value="cancel">Close</button>
+    </form>
+  </dialog>
+
+  <dialog id="journeyDialog" class="modal">
+    <form method="dialog" class="modal-card">
+      <button class="close" value="cancel" aria-label="Close">×</button>
+      <p class="eyebrow">SAFER MOBILITY</p><h2>Safe Journey</h2>
+      <p class="muted">Set a check-in timer. This prototype stores the timer locally; it cannot monitor you or notify contacts in the background.</p>
+      <label>Journey duration
+        <select id="journeyMinutes">
+          <option value="15">15 minutes</option><option value="30" selected>30 minutes</option>
+          <option value="45">45 minutes</option><option value="60">60 minutes</option>
+        </select>
+      </label>
+      <div id="journeyStatus" class="result-box">No active journey.</div>
+      <button id="startJourney" class="primary-button" type="button">Start journey timer</button>
+      <button id="checkIn" class="secondary-button" type="button" disabled>I'm safe — check in</button>
+      <button class="text-button" value="cancel">Close</button>
+    </form>
+  </dialog>
+
+  <dialog id="historyDialog" class="modal">
+    <form method="dialog" class="modal-card">
+      <button class="close" value="cancel" aria-label="Close">×</button>
+      <p class="eyebrow">ON-DEVICE RECORDS</p><h2>Safety history</h2>
+      <div id="historyList" class="list"></div>
+      <button class="text-button" value="cancel">Close</button>
+    </form>
+  </dialog>
+
+  <dialog id="helpDialog" class="modal">
+    <form method="dialog" class="modal-card">
+      <button class="close" value="cancel" aria-label="Close">×</button>
+      <p class="eyebrow">IMPORTANT</p><h2>What SHIELD can and cannot do</h2>
+      <ul class="help-list">
+        <li><b>GPS:</b> May provide coordinates without mobile internet, if device location is enabled and permission is granted.</li>
+        <li><b>Remote alerts:</b> Need SMS, mobile data, Wi-Fi, satellite service or another working communication path.</li>
+        <li><b>SMS:</b> This prototype opens your messaging app with a prepared draft. You must review and send it.</li>
+        <li><b>112:</b> The call link opens your phone dialer. Confirm the call only in a genuine emergency.</li>
+        <li><b>Offline:</b> Local screens and saved records work offline after first load. Offline storage cannot deliver a remote alert.</li>
+        <li><b>Background:</b> This PWA does not provide reliable background tracking, automatic SMS, or Bluetooth mesh relay.</li>
+      </ul>
+      <button class="text-button" value="cancel">I understand</button>
+    </form>
+  </dialog>
+
+  <script src="app.js"></script>
+</body>
+</html>
